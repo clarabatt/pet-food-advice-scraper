@@ -1,8 +1,8 @@
-from pet_food_advice_scraper import pet_food
-import lxml
 import re
-from bs4 import BeautifulSoup
+import lxml
 import requests
+from bs4 import BeautifulSoup
+from pet_food_advice_scraper import pet_food
 
 PETSMART_BASE_URL = "https://www.petsmart.ca"
 PAGE_SIZE = 36
