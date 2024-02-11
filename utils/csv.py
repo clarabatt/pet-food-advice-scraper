@@ -10,7 +10,7 @@ def append_to_csv(json_data: dict, session_code: int, file_name: str):
     directory = create_files_directory()
 
     file_path = os.path.join(
-        directory, f"{date.today()}_{session_code}_{file_name}.json"
+        directory, f"{date.today()}_{session_code}_{file_name}.csv"
     )
 
     if os.path.exists(directory):
