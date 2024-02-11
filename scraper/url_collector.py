@@ -2,10 +2,8 @@ import requests
 import random
 import logging
 from bs4 import BeautifulSoup
-from scraper.utils import (
-    get_numbers_from_string,
-    append_data_to_json_file,
-)
+from utils.json import append_data_to_json_file
+from utils.others import get_numbers_from_string
 
 RequestException = requests.exceptions.RequestException
 
@@ -26,12 +24,12 @@ ANIMALS_SUB_URLS = {
 }
 
 
-def _extract_product_urls_from_html(
+def fetch_all_product_urls_recursively(
     url: str, page: int = 0, urls: list = None, max_pages: int = 0
 ):
     """
-    Extracts all product URLs from the List of products HTML's page.
-    To handle pagination, it will keep calling itself until it reaches the last page."""
+    Recursively fetches and accumulates all product URLs from a paginated list of products on a webpage.
+    """
 
     if urls is None:
         urls = []
@@ -61,7 +59,7 @@ def _extract_product_urls_from_html(
         new_urls.append(PETSMART_BASE_URL + sub_url)
 
     return (
-        _extract_product_urls_from_html(url, page + 1, new_urls, number_of_pages)
+        fetch_all_product_urls_recursively(url, page + 1, new_urls, number_of_pages)
         if page < number_of_pages
         else new_urls
     )
@@ -75,7 +73,7 @@ def extract_and_save_all_product_urls():
     description = "All Petsmart DryFood URLs organized by animal type."
     session_code = random.randint(1000, 9999)
     for animal_type, url in ANIMALS_SUB_URLS.items():
-        urls_dict = {animal_type: _extract_product_urls_from_html(url)}
+        urls_dict = {animal_type: fetch_all_product_urls_recursively(url)}
         logging.info(
             f"Got all {animal_type} product URLs: {len(urls_dict[animal_type])} found"
         )
