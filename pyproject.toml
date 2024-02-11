@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "pet-food-advice-scraper"
+version = "0.1.0"
+description = ""
+authors = ["Clara Battesini <clarabattesini@gmail.com>"]
+readme = "README.md"
+packages = [{include = "pet_food_advice_scraper"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+requests = "^2.31.0"
+pandas = "^2.2.0"
+beautifulsoup4 = "^4.12.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
