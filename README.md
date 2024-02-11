@@ -2,9 +2,21 @@
 
 This project is a web scraper that collects pet food information to create a database of pet food products.
 
-## Installation
+## Environment Setup
 
-This project uses [Poetry](https://python-poetry.org/) for dependency management. To install the dependencies, first [install Poetry](https://python-poetry.org/docs/#installation), then run:
+This project uses [Poetry](https://python-poetry.org/) for dependency management. 
+
+**[Install Poetry following their documentation.](https://python-poetry.org/docs/#installation)**
+
+Once Poetry is installed, make sure to configure it to create virtual environments within the project's directory:
+
+> This is a recommended setting so it will be easier to delete the virtual environment if needed.
+
+```bash
+poetry config virtualenvs.in-project true
+```
+
+Install the dependencies using:
 
 ```bash
 poetry install
@@ -13,6 +25,12 @@ poetry install
 This will install the dependencies and create a virtual environment for the project.
 
 ## Usage
+
+To activate the virtual environment, use:
+
+```bash
+poetry shell
+```
 
 To run the project, use:
 
