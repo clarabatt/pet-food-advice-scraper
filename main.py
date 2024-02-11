@@ -1,5 +1,6 @@
 import re
 import lxml
+import json
 import requests
 from bs4 import BeautifulSoup
 from pet_food_advice_scraper import pet_food
@@ -48,6 +49,17 @@ def get_product_urls(url, page=0, urls=[], max_pages=0):
     )
 
 
-cat_results = get_product_urls(ANIMALS_SUB_URLS["cat"])
+def products_urls():
+    urls_dict = {}
+    for animal_type, url in ANIMALS_SUB_URLS.items():
+        print(f"Getting all {animal_type} products URLs")
+        results = get_product_urls(url)
+        urls_dict[animal_type] = results
+        print(f"Got {len(results)} {animal_type} products")
+    urls_json = json.dumps(urls_dict)
+    with open("products_urls.json", "w") as file:
+        file.write(urls_json)
+    print("Done")
 
-print(len(cat_results))
+
+products_urls()
