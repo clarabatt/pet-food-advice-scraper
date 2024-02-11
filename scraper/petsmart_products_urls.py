@@ -1,12 +1,10 @@
-import json
 import requests
 import random
 import logging
-from typing import List, Dict
 from bs4 import BeautifulSoup
 from scraper.utils import (
     get_numbers_from_string,
-    save_to_json_into_files,
+    append_data_to_json_file,
 )
 
 RequestException = requests.exceptions.RequestException
@@ -29,11 +27,9 @@ ANIMALS_SUB_URLS = {
 
 
 def _extract_product_urls_from_html(
-    url: str, page: int = 0, urls: List[str] = None, max_pages: int = 0
+    url: str, page: int = 0, urls: list = None, max_pages: int = 0
 ):
     """
-    Params: url: str, page: int, urls: List[str], max_pages: int
-    Returns: List[str]
     Extracts all product URLs from the List of products HTML's page.
     To handle pagination, it will keep calling itself until it reaches the last page."""
 
@@ -71,33 +67,17 @@ def _extract_product_urls_from_html(
     )
 
 
-def _append_to_json_file(data: Dict, execution_code: str):
+def extract_and_save_all_product_urls():
     """
-    Params: data: Dict, execution_code: str
-    Returns: None
-    Appends the data to a json file with the given execution_code. If the file doesn't exist, it creates it.
+    Extracts all product URLs from the Petsmart website and saves them to a JSON file.
+    Generates a random session code to simulate a session and aggregate data.
     """
-    urls_json = json.dumps(data)
-    try:
-        return save_to_json_into_files(urls_json, "products_urls", execution_code)
-    except Exception as e:
-        logging.error(f"Error saving to json: {e}")
-
-
-def process_all_animals_products_urls():
-    """
-    Params: None
-    Returns: None
-    Start point to extracts all products URLs from the Petsmart website and saves it to a json file.
-    Generates a random execution code to simulate a session and aggregate all the data from the same execution.
-    """
-    execution_code = random.randint(1000, 9999)
+    description = "All Petsmart DryFood URLs organized by animal type."
+    session_code = random.randint(1000, 9999)
     for animal_type, url in ANIMALS_SUB_URLS.items():
-        urls_dict = {}
-        logging.info(f"Getting all {animal_type} products URLs")
-        results = _extract_product_urls_from_html(url)
-        urls_dict[animal_type] = results
-        logging.info(f"Got {len(results)} {animal_type} products")
-        _append_to_json_file(urls_dict, execution_code)
-
-    logging.info("Done")
+        urls_dict = {animal_type: _extract_product_urls_from_html(url)}
+        logging.info(
+            f"Got all {animal_type} product URLs: {len(urls_dict[animal_type])} found"
+        )
+        append_data_to_json_file(urls_dict, description, session_code, "product_urls")
+    logging.info("Data extraction and saving completed.")

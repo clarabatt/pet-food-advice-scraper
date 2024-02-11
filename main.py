@@ -1,5 +1,5 @@
 from scraper.petsmart_products_urls import (
-    process_all_animals_products_urls,
+    extract_and_save_all_product_urls,
 )
 
-process_all_animals_products_urls()
+extract_and_save_all_product_urls()
