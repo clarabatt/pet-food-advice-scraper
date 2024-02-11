@@ -1,14 +1,8 @@
-import re
 import os
 import json
 import logging
 from datetime import date
-
-
-def get_numbers_from_string(string: str):
-    """
-    Extracts all numbers from a string and returns them as a list of strings."""
-    return re.findall(r"\d+", string)
+from utils.others import create_files_directory
 
 
 def load_or_initialize_json_file(file_path):
@@ -40,9 +34,7 @@ def save_data_to_json_file(
     """
     Saves data into a JSON file in a specified directory. Creates the file or appends to it if it exists.
     """
-    directory = os.path.join(os.path.abspath("."), "files")
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+    directory = create_files_directory()
 
     file_path = os.path.join(
         directory, f"{date.today()}_{session_code}_{file_name}.json"
