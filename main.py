@@ -20,7 +20,7 @@ def getting_product_data(file_path):
     for url_array in data.values():
         for url in url_array:
             fetch_product_data(url)
-            sleep(5)
+            sleep(1)
 
 
 getting_product_data("files/2024-02-11_9095_product_urls.json")
