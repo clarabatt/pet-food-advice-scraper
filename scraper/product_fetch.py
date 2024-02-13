@@ -17,8 +17,7 @@ def extract_data_from_product_page(soup: BeautifulSoup):
     product_data = identify_product_data(script_tags)
 
     if product_data is not None:
-        session_code = random.randint(1000, 9999)
-        append_to_csv(product_data["product"], session_code, "product_data")
+        append_to_csv(product_data["product"], "product_data")
 
 
 def identify_product_data(script_tags):
