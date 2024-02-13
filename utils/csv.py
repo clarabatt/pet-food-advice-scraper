@@ -4,21 +4,25 @@ from datetime import date
 from utils.others import create_files_directory
 
 
-def append_to_csv(json_data: dict, session_code: int, file_name: str):
+def append_to_csv(json_data: dict, file_name: str):
     """
     Converts JSON data and append into a CSV file.
     """
     directory = create_files_directory()
 
-    file_path = os.path.join(
-        directory, f"{date.today()}_{session_code}_{file_name}.csv"
-    )
+    file_path = os.path.join(directory, f"{date.today()}_{file_name}.csv")
 
-    merged = {k: v for d in json_data.values() for k, v in d.items()}
+    processed_data = {k: v for d in json_data.values() for k, v in d.items()}
 
-    if os.path.exists(directory):
-        with open(file_path, "a", newline="") as file:
-            writer = csv.DictWriter(file, fieldnames=merged.keys())
-            if file.tell() == 0:
-                writer.writeheader()
-            writer.writerow(merged)
+    if isinstance(processed_data, dict):
+        processed_data = [processed_data]
+
+    with open(file_path, "a", newline="", encoding="utf-8") as file:
+        if os.stat(file_path).st_size == 0:
+            # File is empty, write header
+            writer = csv.DictWriter(file, fieldnames=processed_data[0].keys())
+            writer.writeheader()
+        else:
+            writer = csv.DictWriter(file, fieldnames=processed_data[0].keys())
+
+        writer.writerows(processed_data)
