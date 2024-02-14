@@ -39,4 +39,43 @@ col3.metric("\# Reviews", filtered_df["rating_count"].sum())
 col4.metric("Average Rating", filtered_df["rating"].mean().round(2))
 st.write("")
 
-st.bar_chart(data=filtered_df, y=["price", "rating"], x="brand")
+# ---------- Price per Kg ----------
+
+col1, col2 = st.columns(2)
+col1.markdown("### Cheapest brands")
+best_price_table_df = (
+    filtered_df.groupby("brand")["price_per_kg"]
+    .mean()
+    .sort_values(ascending=True)
+    .apply(lambda x: f"${x:.2f}")
+    .round(2)
+    .head(5)
+)
+best_price_table_df = best_price_table_df.rename("Price per Kg")
+col1.table(best_price_table_df)
+col2.markdown("### Best rated brands")
+grouped_df = filtered_df.groupby("brand").agg(
+    {
+        "price_per_kg": lambda x: np.average(
+            x, weights=filtered_df.loc[x.index, "rating"]
+        ),
+        "rating": "mean",
+    }
+)
+
+grouped_df = grouped_df.dropna(subset=["price_per_kg"])
+grouped_df["price_per_kg"] = grouped_df["price_per_kg"].apply(lambda x: f"${x:.2f}")
+grouped_df = grouped_df.sort_values("rating", ascending=False).head(5)
+grouped_df = grouped_df.rename(
+    columns={"price_per_kg": "Price per Kg", "rating": "Rating"}
+)
+
+col2.table(grouped_df)
+# col2.table(
+#     filtered_df.groupby("brand")["price_per_kg"]
+#     .mean()
+#     .sort_values(ascending=False)
+#     .apply(lambda x: f"${x:.2f}")
+#     .round(2)
+#     .head(5)
+# )
