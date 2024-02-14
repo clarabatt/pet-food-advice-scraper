@@ -8,8 +8,6 @@ def sidebar(df):
     with st.sidebar:
         st.markdown(
             """
-            # Pet Food Analysis
-            
             **Developed by:** [Clara Battesini](https://www.linkedin.com/in/clara-battesini/)
             
             **Source:** [PetSmart](https://www.petsmart.com/)
