@@ -3,37 +3,36 @@ import pandas as pd
 
 def get_life_stage(name: str):
     if "puppy" in name.lower():
-        return "puppy"
+        return "Puppy"
     elif "kitten" in name.lower():
-        return "kitten"
+        return "Kitten"
     elif "senior" in name.lower():
-        return "senior"
+        return "Senior"
     else:
-        return "adult"
+        return "Adult"
 
 
 def get_animal_size(name: str):
     if "x-small" in name.lower():
-        return "x-small"
+        return "X-Small"
     elif "x-large" in name.lower():
-        return "x-large"
+        return "X-Large"
     elif "small" in name.lower():
-        return "small"
+        return "Small"
     elif "medium" in name.lower():
-        return "medium"
+        return "Medium"
     elif "large" in name.lower():
-        return "large"
+        return "Large"
     elif "giant" in name.lower():
-        return "giant"
+        return "Giant"
     else:
         return None
 
 
-def treat_data():
+def treated_data():
     df = pd.read_csv("files/2024-02-13_petsmart_products.csv")
+    df = df[df["animal_type"] != "Featured Shops"]
+    df["animal_type"] = df["animal_type"].apply(lambda x: x.capitalize())
     df["animal_size"] = df["name"].apply(get_animal_size)
     df["animal_lifestage"] = df["name"].apply(get_life_stage)
     return df
-
-
-treat_data()
