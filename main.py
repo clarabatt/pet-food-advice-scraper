@@ -1,7 +1,7 @@
 import json
 from time import sleep
 from scraper.product_fetch import (
-    fetch_product_data,
+    fetch_and_parse_product_page,
 )
 
 # from scraper.petsmart_products_urls import (
@@ -19,7 +19,7 @@ def getting_product_data(file_path):
 
     for url_array in data.values():
         for url in url_array:
-            fetch_product_data(url)
+            fetch_and_parse_product_page(url)
             sleep(1)
 
 

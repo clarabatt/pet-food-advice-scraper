@@ -1,26 +1,13 @@
 import logging
 import requests
 import json
-import random
+from scraper.product import Product
 from bs4 import BeautifulSoup
-from utils.csv import append_to_csv
 
 RequestException = requests.exceptions.RequestException
 
 
-def extract_data_from_product_page(soup: BeautifulSoup):
-    """
-    Extracts product data from a product page and saves it into a CSV file.
-    """
-    script_tags = soup.find_all("script", type="text/javascript")
-
-    product_data = identify_product_data(script_tags)
-
-    if product_data is not None:
-        append_to_csv(product_data["product"], "product_data")
-
-
-def identify_product_data(script_tags):
+def extract_digital_data_from_scripts(script_tags):
     digital_data = None
     for tag in script_tags:
         if "digitalData" in tag.text:
@@ -42,7 +29,54 @@ def identify_product_data(script_tags):
         return None
 
 
-def fetch_product_data(url: str):
+def extract_product_data_from_html(soup: BeautifulSoup):
+    """
+    Extracts product data from a product page and saves it into a CSV file.
+    """
+    script_tags_digital_product = soup.find_all("script", type="text/javascript")
+    script_tags_application = soup.find("script", {"type": "application/ld+json"})
+
+    product_data_a = json.loads(script_tags_application.string)
+    product_data_b = extract_digital_data_from_scripts(script_tags_digital_product)[
+        "product"
+    ]
+    product_data_b = {**product_data_b["productInfo"], **product_data_b["category"]}
+
+    product_data = {**product_data_a, **product_data_b}
+
+    if product_data is not None:
+        Product(
+            price=product_data["price"],
+            name=product_data["productName"],
+            description=product_data["description"],
+            url=product_data["url"],
+            brand=product_data["brand"],
+            image=product_data["image"],
+            rating=product_data["aggregateRating"]["ratingValue"],
+            rating_best=product_data["aggregateRating"]["bestRating"],
+            rating_count=product_data["aggregateRating"]["reviewCount"],
+            animal_type=product_data["primaryCategory"],
+            size_merged=product_data["size"],
+            categories=[
+                product_data["subCategory1"],
+                product_data["subCategory2"],
+                product_data["subCategory3"],
+            ],
+            heath_consideration=(
+                product_data["healthConsideration"]
+                if "healthConsideration" in product_data
+                else None
+            ),
+            animal_lifestage=(
+                product_data["lifeStage"] if "lifeStage" in product_data else None
+            ),
+            animal_size=(
+                product_data["animalSize"] if "animalSize" in product_data else None
+            ),
+        ).append_to_csv("petsmart_products")
+
+
+def fetch_and_parse_product_page(url: str):
     """
     Fetches product data from a product page and extracts it into a CSV file.
     """
@@ -53,4 +87,4 @@ def fetch_product_data(url: str):
         logging.error(f"Request to {url} failed: {e}")
     else:
         soup = BeautifulSoup(page_content.content, "lxml")
-        extract_data_from_product_page(soup)
+        extract_product_data_from_html(soup)
