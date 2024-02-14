@@ -44,7 +44,10 @@ class Product:
         self.separate_size_values()
 
     def separate_size_values(self):
-        num = get_numbers_from_string(self.size_merged)
+        if self.size_merged is not None:
+            num = get_numbers_from_string(str(self.size_merged))
+        else:
+            num = None
         if num:
             self.size_value = float(num[0])
             self.size_unit = self.size_merged.replace(num[0], "").strip()
