@@ -25,7 +25,7 @@ def sidebar(df):
         )
 
         st.write("**Data Sample:**")
-        st.dataframe(df.head())
+        st.dataframe(df.tail())
 
         st.write(
             "[Github Repository](https://github.com/clarabatt/pet-food-advice-scraper/tree/main)"
