@@ -27,6 +27,12 @@ def sidebar(df):
         st.write("**Data Sample:**")
         st.dataframe(df.tail())
 
+        st.download_button(
+            "Download Data",
+            df.to_csv(index=False),
+            "petsmart_products.csv",
+        )
+
         st.write(
             "[Github Repository](https://github.com/clarabatt/pet-food-advice-scraper/tree/main)"
         )
