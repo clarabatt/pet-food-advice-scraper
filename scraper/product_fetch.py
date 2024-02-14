@@ -36,6 +36,12 @@ def extract_product_data_from_html(soup: BeautifulSoup):
     script_tags_digital_product = soup.find_all("script", type="text/javascript")
     script_tags_application = soup.find("script", {"type": "application/ld+json"})
 
+    if script_tags_application is None or len(script_tags_digital_product) == 0:
+        logging.error(
+            "Could not find digitalData or application/ld+json script tags for this product. Skipping."
+        )
+        return
+
     product_data_a = json.loads(script_tags_application.string)
     product_data_b = extract_digital_data_from_scripts(script_tags_digital_product)[
         "product"
@@ -56,7 +62,7 @@ def extract_product_data_from_html(soup: BeautifulSoup):
             rating_best=product_data["aggregateRating"]["bestRating"],
             rating_count=product_data["aggregateRating"]["reviewCount"],
             animal_type=product_data["primaryCategory"],
-            size_merged=product_data["size"],
+            size_merged=product_data["size"] if "size" in product_data else None,
             categories=[
                 product_data["subCategory1"],
                 product_data["subCategory2"],
