@@ -42,6 +42,9 @@ st.write("")
 # ---------- Price per Kg ----------
 
 col1, col2 = st.columns(2)
+
+# ---------- Table 1 ----------
+
 col1.markdown("### Cheapest brands")
 best_price_table_df = (
     filtered_df.groupby("brand")["price_per_kg"]
@@ -51,25 +54,28 @@ best_price_table_df = (
     .round(2)
     .head(5)
 )
-best_price_table_df = best_price_table_df.rename("Price per Kg")
+best_price_table_df = best_price_table_df.rename("Price/Kg (avg)")
 col1.table(best_price_table_df)
+col1.markdown("*\*Price/Kg is a simple average*")
+# ---------- Table 2 ----------
+
 col2.markdown("### Best rated brands")
 grouped_df = filtered_df.groupby("brand").agg(
-    {
-        "price_per_kg": lambda x: np.average(
-            x, weights=filtered_df.loc[x.index, "rating"]
-        ),
-        "rating": "mean",
-    }
+    price_per_kg=("price_per_kg", "mean"),
+    rating=(
+        "rating",
+        lambda x: np.average(x, weights=filtered_df.loc[x.index, "rating_count"]),
+    ),
 )
 
 grouped_df = grouped_df.dropna(subset=["price_per_kg"])
 grouped_df["price_per_kg"] = grouped_df["price_per_kg"].apply(lambda x: f"${x:.2f}")
 grouped_df = grouped_df.sort_values("rating", ascending=False).head(5)
 grouped_df = grouped_df.rename(
-    columns={"price_per_kg": "Price per Kg", "rating": "Rating"}
+    columns={"price_per_kg": "Price/Kg (avg)", "rating": "Rating"}
 )
 col2.table(grouped_df)
+col2.markdown("*\*Rating weighted by number of reviews*")
 
 
 # ---------- Correlation Chart ----------
