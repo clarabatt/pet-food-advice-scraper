@@ -4,6 +4,35 @@ This project is a web scraper that collects pet food information to create a dat
 
 ![Pet Food Advice Scraper](./example.png)
 
+## Modules
+
+- **Scraper**: The scrapper module is responsible for collecting the data from the website. It uses the `requests` and `beautifulsoup4` libraries to parse the HTML and extract the information.
+- **app**: The app module is responsible for the interface. It uses the `streamlit` library to create a web interface to interact with the data.
+- **utils**: The utils module contains helper functions to be used across the project.
+
+## Features
+
+### Scraper
+
+- **URL Collector**: The scrapper collects the URLs of the products from the website's paginated list and saves them to a json file.
+
+- **Product Fetch**: The scrapper collects the information from the product's page and saves it to a csv file with the following columns:
+  - price
+  - name
+  - image
+  - url
+  - description
+  - brand
+  - rating
+  - rating_count
+  - rating_best
+  - categories
+  - heath_consideration
+  - animal_type
+  - animal_lifestage
+  - animal_size
+  - size_merged
+
 ## Environment Setup
 
 This project uses [Poetry](https://python-poetry.org/) for dependency management.
