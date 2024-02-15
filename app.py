@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from app_sidebar import sidebar
 from app_data_transformation import treated_data
+from app_correlation import correlation_chart
 
 st.set_page_config(
     page_title="Pet Food Analysis",
@@ -69,13 +70,24 @@ grouped_df = grouped_df.sort_values("rating", ascending=False).head(5)
 grouped_df = grouped_df.rename(
     columns={"price_per_kg": "Price per Kg", "rating": "Rating"}
 )
-
 col2.table(grouped_df)
-# col2.table(
-#     filtered_df.groupby("brand")["price_per_kg"]
-#     .mean()
-#     .sort_values(ascending=False)
-#     .apply(lambda x: f"${x:.2f}")
-#     .round(2)
-#     .head(5)
-# )
+
+
+# ---------- Correlation Chart ----------
+
+st.write("### Correlation Chart")
+
+st.plotly_chart(correlation_chart(filtered_df), use_container_width=True)
+st.expander("Notes", expanded=False).write(
+    """
+    - **Success**: Products with high ratings and high number of reviews.
+    - **Needs More Marketing**: Products with high ratings but low number of reviews.
+    - **Low Quality**: Products with low ratings but high number of reviews.
+    - **Question Mark**: Products with low ratings and low number of reviews.
+    
+    Conclusion:
+    - The majority of the products are in the "Needs More Marketing" category. 
+    - The lack of products in the "Low Quality" category means that PetSmart must select their products frequently.
+    - The "Question Mark" category is the least populated, propably those are recent added products.
+    """
+)
