@@ -74,19 +74,28 @@ col2.table(grouped_df)
 
 # ---------- Correlation Chart ----------
 
-st.write("### Correlation Chart")
+st.write("### Correlation Chart")\
 
-st.plotly_chart(correlation_chart(filtered_df), use_container_width=True)
-st.expander("Notes", expanded=False).write(
-    """
-    - **Success**: Products with high ratings and high number of reviews.
-    - **Needs More Marketing**: Products with high ratings but low number of reviews.
-    - **Low Quality**: Products with low ratings but high number of reviews.
-    - **Question Mark**: Products with low ratings and low number of reviews.
-    
-    Conclusion:
-    - The majority of the products are in the "Needs More Marketing" category. 
-    - The lack of products in the "Low Quality" category means that PetSmart must select their products frequently.
-    - The "Question Mark" category is the least populated, propably those are recent added products.
-    """
-)
+fig, correlation_data = correlation_chart(filtered_df)
+
+st.plotly_chart(fig, use_container_width=True)
+with st.expander("Notes", expanded=False):
+    st.write(
+        """
+        - **Success**: Products with high ratings and high number of reviews.
+        - **Needs More Marketing**: Products with high ratings but low number of reviews.
+        - **Low Quality**: Products with low ratings but high number of reviews.
+        - **Question Mark**: Products with low ratings and low number of reviews.
+        
+        Conclusion:
+        - The majority of the products are in the "Needs More Marketing" category. 
+        - The lack of products in the "Low Quality" category means that PetSmart must select their products frequently.
+        - The "Question Mark" category is the least populated, probably those are recent added products.
+        """
+    )
+    st.download_button(
+        label="Download Categorized Products",
+        data=correlation_data.to_csv(index=False).encode("utf-8"),
+        file_name="categorized_products.csv"
+    )
+
