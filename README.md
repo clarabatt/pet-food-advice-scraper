@@ -4,7 +4,7 @@ This project is a web scraper that collects pet food information to create a dat
 
 ## Environment Setup
 
-This project uses [Poetry](https://python-poetry.org/) for dependency management. 
+This project uses [Poetry](https://python-poetry.org/) for dependency management.
 
 **[Install Poetry following their documentation.](https://python-poetry.org/docs/#installation)**
 
@@ -26,16 +26,32 @@ This will install the dependencies and create a virtual environment for the proj
 
 ## Usage
 
+### Scrapper
+
 To activate the virtual environment, use:
 
 ```bash
 poetry shell
 ```
 
-To run the project, use:
+To control and specific parts of the project, call the desired functions at `main.py` and use to run:
 
 ```bash
 poetry run python main.py
 ```
 
 This will run the main.py script within the project's virtual environment.
+
+### Interface
+
+To activate the virtual environment, use:
+
+```bash
+poetry shell
+```
+
+To run the interface with streamlit, use:
+
+```bash
+streamlit run app.py
+```
