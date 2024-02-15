@@ -11,6 +11,17 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+def weighted_rating(x, w):
+    """
+    Custom weighted rating calculation.
+    - x: Array of ratings.
+    - w: Array of weights (number of reviews).
+    """
+    review_threshold = 300
+    weight_modifier = np.where(w < review_threshold, 0.5, 1) * np.log1p(w)
+    return np.average(x, weights=weight_modifier)
+
+
 st.write("# Pet Food Analysis")
 
 with st.spinner("Running the long computation..."):
@@ -45,11 +56,11 @@ col1, col2 = st.columns(2)
 
 # ---------- Table 1 ----------
 
-col1.markdown("### Cheapest brands")
+col1.markdown("### Expensive brands")
 best_price_table_df = (
     filtered_df.groupby("brand")["price_per_kg"]
     .mean()
-    .sort_values(ascending=True)
+    .sort_values(ascending=False)
     .apply(lambda x: f"${x:.2f}")
     .round(2)
     .head(5)
@@ -60,11 +71,16 @@ col1.markdown("*\*Price/Kg is a simple average*")
 # ---------- Table 2 ----------
 
 col2.markdown("### Best rated brands")
-grouped_df = filtered_df.groupby("brand").agg(
+grouped_df = filtered_df.groupby("brand").filter(lambda x: x['rating_count'].sum() >= 200)
+grouped_df = grouped_df.groupby("brand").agg(
     price_per_kg=("price_per_kg", "mean"),
+    rating_count=("rating_count", "sum"),
     rating=(
         "rating",
-        lambda x: np.average(x, weights=filtered_df.loc[x.index, "rating_count"]),
+        lambda x: weighted_rating(
+            filtered_df.loc[x.index, "rating"],
+            filtered_df.loc[x.index, "rating_count"]
+        ),
     ),
 )
 
@@ -72,13 +88,14 @@ grouped_df = grouped_df.dropna(subset=["price_per_kg"])
 grouped_df["price_per_kg"] = grouped_df["price_per_kg"].apply(lambda x: f"${x:.2f}")
 grouped_df = grouped_df.sort_values("rating", ascending=False).head(5)
 grouped_df = grouped_df.rename(
-    columns={"price_per_kg": "Price/Kg (avg)", "rating": "Rating"}
+    columns={"price_per_kg": "Price/Kg (avg)", "rating": "Rating", "rating_count": "# Reviews"}
 )
 col2.table(grouped_df)
 col2.markdown("*\*Rating weighted by number of reviews*")
 
 
 # ---------- Correlation Chart ----------
+st.write("")
 
 st.write("### Correlation Chart")\
 
@@ -88,10 +105,10 @@ st.plotly_chart(fig, use_container_width=True)
 with st.expander("Notes", expanded=False):
     st.write(
         """
-        - **Success**: Products with high ratings and high number of reviews.
-        - **Needs More Marketing**: Products with high ratings but low number of reviews.
-        - **Low Quality**: Products with low ratings but high number of reviews.
-        - **Question Mark**: Products with low ratings and low number of reviews.
+        - **Success**: Products with high ratings and high number of reviews. **Must invest in these products.**
+        - **Needs More Marketing**: Products with high ratings but low number of reviews. **Get some of these products.**
+        - **Low Quality**: Products with low ratings but high number of reviews. **Avoid these products.**
+        - **Question Mark**: Products with low ratings and low number of reviews. **Avoid these products.**
         
         Conclusion:
         - The majority of the products are in the "Needs More Marketing" category. 
@@ -104,4 +121,3 @@ with st.expander("Notes", expanded=False):
         data=correlation_data.to_csv(index=False).encode("utf-8"),
         file_name="categorized_products.csv"
     )
-
