@@ -71,7 +71,8 @@ col1.markdown("*\*Price/Kg is a simple average*")
 # ---------- Table 2 ----------
 
 col2.markdown("### Best rated brands")
-grouped_df = filtered_df.groupby("brand").filter(lambda x: x['rating_count'].sum() >= 200)
+grouped_df = filtered_df.dropna(subset=["rating"])
+grouped_df = grouped_df.groupby("brand").filter(lambda x: x['rating_count'].sum() >= 200)
 grouped_df = grouped_df.groupby("brand").agg(
     price_per_kg=("price_per_kg", "mean"),
     rating_count=("rating_count", "sum"),
