@@ -103,7 +103,7 @@ st.write("### Correlation Chart")\
 fig, correlation_data = correlation_chart(filtered_df)
 
 st.plotly_chart(fig, use_container_width=True)
-with st.expander("Notes", expanded=False):
+with st.expander("Notes", expanded=True):
     st.write(
         """
         - **Success**: Products with high ratings and high number of reviews. **Must invest in these products.**
