@@ -1,9 +1,8 @@
 import streamlit as st
-import pandas as pd
 import numpy as np
-from app_sidebar import sidebar
-from app_data_transformation import treated_data
-from app_correlation import correlation_chart
+from app.sidebar import sidebar
+from app.data_transformation import treated_data
+from app.correlation import correlation_chart
 
 st.set_page_config(
     page_title="Pet Food Analysis",
