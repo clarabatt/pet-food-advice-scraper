@@ -2,6 +2,8 @@
 
 This project is a web scraper that collects pet food information to create a database of pet food products.
 
+![Pet Food Advice Scraper](./example.png)
+
 ## Environment Setup
 
 This project uses [Poetry](https://python-poetry.org/) for dependency management.
